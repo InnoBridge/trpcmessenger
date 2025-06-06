@@ -5,8 +5,10 @@ import {
     publishMessage,
     subscribeToEvents
 } from '@/trpc/client/api';
-
-import { event, message } from '@innobridge/qatar';
+import { event } from '@innobridge/qatar';
+import { MessageEvent } from '@/models/events';
+import { Message } from '@/models/messages';
+import { M } from 'vitest/dist/chunks/environment.d.Dmw5ulng.js';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -16,10 +18,10 @@ const userId = process.argv[2] || 'default-user-123';
 
 const subscribeToMessagesTest = async () => {
     console.log('Starting message subscription test...');
-    const messages: message.Message[] = [];
+    const messages: Message[] = [];
     const subscription = await subscribeToEvents(userId, (event: event.BaseEvent) => {
         console.log('Received event:', JSON.stringify(event, null, 2));
-        const message = event as event.MessageEvent;
+        const message = event as MessageEvent;
         messages.push(message.message);
     });
     console.log("Read messages:", messages);
@@ -27,7 +29,7 @@ const subscribeToMessagesTest = async () => {
     return subscription;
 };
 
-const sendMessageTest = (message: event.MessageEvent) => {
+const sendMessageTest = (message: MessageEvent) => {
     console.log('Starting message publishing test...');
 
     publishMessage(message);
@@ -49,7 +51,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
         console.log('Waiting for subscription to be established...');
         console.log('Subscription result:', subscription);
 
-        const message1: message.Message = {
+        const message1: Message = {
             chatId: 'chat-123',
             messageId: 'message-123', // Keep same ID
             userIds: ['123', '456'],
@@ -58,7 +60,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
             createdAt: new Date().getTime(),
         };
 
-        const message2: message.Message = {
+        const message2: Message = {
             chatId: 'chat-123',
             messageId: 'message-124', // Keep same ID
             userIds: ['123', '456'],
@@ -66,12 +68,12 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
             content: 'Hello13, published message2!',
             createdAt: new Date().getTime(),
         };
-        const messaggeEvent1: event.MessageEvent = {
+        const messaggeEvent1: MessageEvent = {
             type: 'message',
             userIds: message1.userIds,
             message: message1,
         };
-        const messaggeEvent2: event.MessageEvent = {
+        const messaggeEvent2: MessageEvent = {
             type: 'message',
             userIds: message2.userIds,
             message: message2,

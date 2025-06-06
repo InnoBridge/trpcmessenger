@@ -9,6 +9,16 @@ const MessageSchema = z.object({
     createdAt: z.number(),
 });
 
+interface Message {
+    chatId: string;
+    messageId: string;
+    userIds: string[];
+    senderId: string;
+    content: string;
+    createdAt: number;
+};
+
 export {
     MessageSchema,
+    Message
 };

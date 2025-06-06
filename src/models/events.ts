@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { event } from '@innobridge/qatar';
+import { Message } from '@/models/messages';
 
 const BaseEventSchema = z.object({
     type: z.string(),
@@ -17,7 +19,13 @@ const MessageEventSchema = BaseEventSchema.extend({
     }),
 });
 
+interface MessageEvent extends event.BaseEvent {
+    type: 'message';
+    message: Message
+}
+
 export {
     BaseEventSchema,
     MessageEventSchema,
+    MessageEvent
 };
