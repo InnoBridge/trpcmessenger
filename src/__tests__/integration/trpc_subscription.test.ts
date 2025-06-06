@@ -3,12 +3,12 @@ import path from 'path';
 import { 
     initializeTRPCClient, 
     publishMessage,
-    subscribeToMessages
+    subscribeToEvents
 } from '@/trpc/client/api';
-import { message } from '@innobridge/qatar';
+
+import { event, message } from '@innobridge/qatar';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
-
 
 const SERVER_URL = process.env.SERVER_URL;
 
@@ -17,16 +17,17 @@ const userId = process.argv[2] || 'default-user-123';
 const subscribeToMessagesTest = async () => {
     console.log('Starting message subscription test...');
     const messages: message.Message[] = [];
-    const subscription = await subscribeToMessages(userId, (message: message.Message) => {
-        console.log('Received message:', JSON.stringify(message, null, 2));
-        messages.push(message);
+    const subscription = await subscribeToEvents(userId, (event: event.BaseEvent) => {
+        console.log('Received event:', JSON.stringify(event, null, 2));
+        const message = event as event.MessageEvent;
+        messages.push(message.message);
     });
     console.log("Read messages:", messages);
     console.log('Subscribed to messages for user:', userId);
     return subscription;
 };
 
-const sendMessageTest = (message: message.Message) => {
+const sendMessageTest = (message: event.MessageEvent) => {
     console.log('Starting message publishing test...');
 
     publishMessage(message);
@@ -65,11 +66,21 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
             content: 'Hello13, published message2!',
             createdAt: new Date().getTime(),
         };
+        const messaggeEvent1: event.MessageEvent = {
+            type: 'message',
+            userIds: message1.userIds,
+            message: message1,
+        };
+        const messaggeEvent2: event.MessageEvent = {
+            type: 'message',
+            userIds: message2.userIds,
+            message: message2,
+        };
 
         // await delay(2000);
-        sendMessageTest(message1);
+        sendMessageTest(messaggeEvent1);
         // await delay(500); // Small delay between messages
-        sendMessageTest(message2);
+        sendMessageTest(messaggeEvent2);
 
         // await delay(5000); // Wait to receive
         // subscription.unsubscribe(); // Unsubscribe after tests

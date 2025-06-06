@@ -5,21 +5,14 @@ import {
     messagesApi,
 } from '@innobridge/qatar';
 import { EventEmitter } from 'events';
+import { MessageEventSchema } from '@/models/events';
 
-const { publishMessage, subscribeUser } = messagesApi;
-const { unsubscribeUser } = queueApi;
+const { publishMessage } = messagesApi;
+const { unsubscribeUser, subscribeUser } = queueApi;
 
-const MessageSchema = z.object({
-    chatId: z.string(),
-    messageId: z.string(),
-    userIds: z.array(z.string()),
-    senderId: z.string(),
-    content: z.string(),
-    createdAt: z.number(),
-});
 
 const publish = trpc.procedure
-    .input(MessageSchema)
+    .input(MessageEventSchema)
     .mutation(async ({ input }) => { 
         await publishMessage(input);
         return { success: true };
@@ -115,7 +108,7 @@ const subscribeToMessages = trpc.procedure
 
 const messagesRouter = trpc.router({
     publish: publish,
-    subscribeToMessages: subscribeToMessages,
+    // subscribeToMessages: subscribeToMessages,
 });
 
-export { messagesRouter, subscribeToMessages };
+export { messagesRouter };
