@@ -8,7 +8,8 @@ import {
 } from '@trpc/client';
 import { AppRouter } from '@/trpc/server/routes/router';
 import WebSocket from 'ws';
-import { message } from '@innobridge/qatar';
+import { event } from '@innobridge/qatar';
+import { MessageEvent } from '@/models/events';
 
 let client: TRPCClient<AppRouter> | null = null;
 let wsClient: ReturnType<typeof createWSClient> | null = null; // Store wsClient reference
@@ -47,23 +48,23 @@ const initializeTRPCClient = (url: string): void => {
   });
 };
 
-const publishMessage = (message: message.Message) => {
+const publishMessage = (message: MessageEvent) => {
   if (!client) {
     throw new Error('TRPC client is not initialized. Call initiateClient first.');
   }
   return client.messages.publish.mutate(message);
 };
 
-const subscribeToMessages = (
+const subscribeToEvents = (
     userId: string, 
-    messageHandler: (message: message.Message) => void
+    messageHandler: (event: event.BaseEvent, ack: () => void, nack: () => void) => void
 ): Promise<any> => {
     if (!client) {
         throw new Error('TRPC client is not initialized. Call initializeTRPCClient first.');
     }
     
     return new Promise((resolve, reject) => {
-        const subscription = client!.messages.subscribeToMessages.subscribe(
+        const subscription = client!.events.subscribeUser.subscribe(
             { userId },
             {
                 onStarted: () => {
@@ -71,7 +72,12 @@ const subscribeToMessages = (
                     resolve(subscription); // Resolve with subscription object when ready
                 },
                 onData: (message) => {
-                    messageHandler(message);
+                    // Extract ACK/NACK functions from the message
+                    const { _ack, _nack, ...event } = message;           
+                    // Create ACK/NACK functions or use defaults
+                    const ack = _ack || (() => console.log('No ACK function provided'));
+                    const nack = _nack || (() => console.log('No NACK function provided'));
+                    messageHandler(event, ack, nack);
                 },
                 onError: (error) => {
                     console.error('Subscription error:', error);
@@ -95,7 +101,7 @@ const cleanup = () => {
 export { 
   initializeTRPCClient, 
   publishMessage,
-  subscribeToMessages,
+  subscribeToEvents,
   cleanup,
   client
 };
