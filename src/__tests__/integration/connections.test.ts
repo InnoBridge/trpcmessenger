@@ -14,7 +14,6 @@ import {
     getConnectionsByUserId,
     deleteConnection
 } from '@/trpc/client/connections';
-import { fi } from 'zod/v4/locales';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -93,8 +92,8 @@ const acceptConnectionRequestTest = async () => {
     } finally {
         const connection = await getConnectionByUserIdsPair(USER1!, USER2!);
         console.log ('Connection between users:', USER1, USER2, connection);
-        const connecitons = await getConnectionsByUserId(USER1!);
-        console.log ('Connections for user:', USER1, connecitons);
+        const connections = await getConnectionsByUserId(USER1!);
+        console.log ('Connections for user:', USER1, connections);
         if (connection) {
             await deleteConnection(connection.connectionId);
             console.log('Connection deleted successfully');
@@ -139,7 +138,7 @@ const rejectConnectionRequestTest = async () => {
         // await cancelConnectionRequestTest();
         // await acceptConnectionRequestTest();
         await rejectConnectionRequestTest();
-        
+
         console.log("🎉 All integration tests passed");
     } catch (err) {
         console.error("❌ Integration tests failed:", err);

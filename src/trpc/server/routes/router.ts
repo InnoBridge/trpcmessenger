@@ -6,8 +6,6 @@ import {
 import { EventEmitter } from 'events';
 import { connectionsRouter } from '@/trpc/server/routes/connections';
 import { messagesRouter } from '@/trpc/server/routes/messages';
-import { connection } from '@innobridge/usermanagement';
-import { set } from 'zod/v4';
 
 const { subscribeUser, unsubscribeUser } = queueApi;
 
