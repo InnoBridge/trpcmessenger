@@ -57,7 +57,7 @@ const publishMessage = (message: MessageEvent) => {
 
 const subscribeToEvents = (
     userId: string, 
-    messageHandler: (event: event.BaseEvent) => void
+    messageHandler: (event: event.BaseEvent, ack: () => void, nack: () => void) => void
 ): Promise<any> => {
     if (!client) {
         throw new Error('TRPC client is not initialized. Call initializeTRPCClient first.');
@@ -72,7 +72,12 @@ const subscribeToEvents = (
                     resolve(subscription); // Resolve with subscription object when ready
                 },
                 onData: (message) => {
-                    messageHandler(message);
+                    // Extract ACK/NACK functions from the message
+                    const { _ack, _nack, ...event } = message;           
+                    // Create ACK/NACK functions or use defaults
+                    const ack = _ack || (() => console.log('No ACK function provided'));
+                    const nack = _nack || (() => console.log('No NACK function provided'));
+                    messageHandler(event, ack, nack);
                 },
                 onError: (error) => {
                     console.error('Subscription error:', error);

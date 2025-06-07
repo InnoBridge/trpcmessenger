@@ -1,6 +1,6 @@
 {
   "name": "@innobridge/trpcmessenger",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A TypeScript library for trpc client and routes",
   "author": "yilengyao <innobridgetechnology@gmail.com>",
   "repository": {
@@ -56,8 +56,8 @@
     "node": "^20.0.0 || >=22.0.0"
   },
   "dependencies": {
-    "@innobridge/qatar": "file:../qatar/innobridge-qatar-0.1.0.tgz",
-    "@innobridge/usermanagement": "^0.1.0",
+    "@innobridge/qatar": "file:../qatar/innobridge-qatar-1.0.0.tgz",
+    "@innobridge/usermanagement": "^0.1.1",
     "@trpc/client": "^11.3.0",
     "@trpc/server": "^11.3.0",
     "ws": "^8.18.2",
