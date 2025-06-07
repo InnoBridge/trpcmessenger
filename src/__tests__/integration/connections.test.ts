@@ -6,8 +6,15 @@ import {
 import {
     getConnectionRequests,
     createConnectionRequest,
-    deleteConnectionRequest
+    cancelConnectionRequest,
+    acceptConnectionRequest,
+    rejectConnectionRequest,
+    deleteConnectionRequest,
+    getConnectionByUserIdsPair,
+    getConnectionsByUserId,
+    deleteConnection
 } from '@/trpc/client/connections';
+import { fi } from 'zod/v4/locales';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -44,6 +51,81 @@ const createConnectionRequestTest = async () => {
     }
 };
 
+const cancelConnectionRequestTest = async () => {
+    console.log('Starting cancelConnectionRequest test...');
+    let connectionRequest;
+    try {
+        connectionRequest = await createConnectionRequest(USER1!, USER2!, 'Test message');
+        console.log('Connection request created successfully:', connectionRequest);
+        const connectionRequests = await getConnectionRequests(USER2!);
+        console.log('Connection requests for user:', USER2, connectionRequests);
+        const cancelledRequest = await cancelConnectionRequest(connectionRequest.requestId, USER1!);
+        console.log('Connection request cancelled successfully:', cancelledRequest);
+        const connectionRequestsAfterCancellation = await getConnectionRequests(USER2!);
+        console.log('Connection requests after cancellation for user:', USER2, connectionRequestsAfterCancellation);
+        console.log('Cancel connection request test completed successfully');
+    } catch (error) {
+        console.error('Failed to cancel connection request:', error);
+        throw error;
+    } finally {
+        if (connectionRequest) {
+            await deleteConnectionRequest(connectionRequest.requestId);
+        }
+    }
+};
+
+const acceptConnectionRequestTest = async () => {
+    console.log('Starting acceptConnectionRequest test...');
+    let connectionRequest;
+    try {
+        connectionRequest = await createConnectionRequest(USER1!, USER2!, 'Test message');
+        console.log('Connection request created successfully:', connectionRequest);
+        const connectionRequests = await getConnectionRequests(USER2!);
+        console.log('Connection requests for user:', USER2, connectionRequests);
+        const cancelledRequest = await acceptConnectionRequest(connectionRequest.requestId, USER2!);
+        console.log('Connection request accept successfully:', cancelledRequest);
+        const connectionRequestsAfterCancellation = await getConnectionRequests(USER2!);
+        console.log('Connection requests after accept for user:', USER2, connectionRequestsAfterCancellation);
+        console.log('Accept connection request test completed successfully');
+    } catch (error) {
+        console.error('Failed to accept connection request:', error);
+        throw error;
+    } finally {
+        const connection = await getConnectionByUserIdsPair(USER1!, USER2!);
+        console.log ('Connection between users:', USER1, USER2, connection);
+        const connecitons = await getConnectionsByUserId(USER1!);
+        console.log ('Connections for user:', USER1, connecitons);
+        if (connection) {
+            await deleteConnection(connection.connectionId);
+            console.log('Connection deleted successfully');
+        }
+        if (connectionRequest) {
+            await deleteConnectionRequest(connectionRequest.requestId);
+        }
+    }
+};
+    
+const rejectConnectionRequestTest = async () => {
+    console.log('Starting rejectConnectionRequest test...');
+    let connectionRequest;
+    try {
+        connectionRequest = await createConnectionRequest(USER1!, USER2!, 'Test message');
+        console.log('Connection request created successfully:', connectionRequest);
+        const connectionRequests = await getConnectionRequests(USER2!);
+        console.log('Connection requests for user:', USER2, connectionRequests);
+        await rejectConnectionRequest(connectionRequest.requestId, USER2!);
+        const rejectedRequest = await getConnectionRequests(USER2!);
+        console.log('Connection request rejected successfully:', rejectedRequest);
+        console.log('Reject connection request test completed successfully');
+    } catch (error) {
+        console.error('Failed to reject connection request:', error);
+        throw error;
+    } finally {
+        if (connectionRequest) {
+            await deleteConnectionRequest(connectionRequest.requestId);
+        }
+    }
+};
 
 (async function main() {
         let subscription: any;
@@ -53,8 +135,11 @@ const createConnectionRequestTest = async () => {
 
         // async tests in order
         await createConnectionRequestNonExistentUserTest();
-        await createConnectionRequestTest();
-
+        // await createConnectionRequestTest();
+        // await cancelConnectionRequestTest();
+        // await acceptConnectionRequestTest();
+        await rejectConnectionRequestTest();
+        
         console.log("🎉 All integration tests passed");
     } catch (err) {
         console.error("❌ Integration tests failed:", err);

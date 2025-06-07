@@ -6,7 +6,7 @@ import {
     subscribeToEvents
 } from '@/trpc/client/api';
 import { event } from '@innobridge/qatar';
-import { MessageEvent } from '@/models/events';
+import { MessageEvent, ConnectionRequestEvent } from '@/models/events';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -38,7 +38,10 @@ const subscribeToEvent = async () => {
                 case 'message':
                     const messageEvent = event as MessageEvent;
                     console.log('Message Event:', messageEvent);
-                    // Process the message event
+                    break;
+                case 'connectionRequest':
+                    const connectionRequestEvent = event as ConnectionRequestEvent;
+                    console.log('Connection Request Event:', connectionRequestEvent);
                     break;
                 default:
                     console.warn('Unhandled event type:', event.type);

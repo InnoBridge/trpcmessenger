@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { event } from '@innobridge/qatar';
 import { Message } from '@/models/messages';
+import { connection } from '@innobridge/usermanagement';
 
 const BaseEventSchema = z.object({
     type: z.string(),
@@ -24,8 +25,14 @@ interface MessageEvent extends event.BaseEvent {
     message: Message
 }
 
+interface ConnectionRequestEvent extends event.BaseEvent {
+    type: 'connectionRequest';
+    connectionRequest: connection.ConnectionRequest;
+};
+
 export {
     BaseEventSchema,
     MessageEventSchema,
-    MessageEvent
+    MessageEvent,
+    ConnectionRequestEvent
 };
