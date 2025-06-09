@@ -6,6 +6,7 @@ import {
 import { EventEmitter } from 'events';
 import { connectionsRouter } from '@/trpc/server/routes/connections';
 import { messagesRouter } from '@/trpc/server/routes/messages';
+import { usersRouter } from '@/trpc/server/routes/users';
 
 const { subscribeUser, unsubscribeUser } = queueApi;
 
@@ -122,7 +123,8 @@ const eventsRouter = trpc.router({
 const router = trpc.router({
     events: eventsRouter,
     messages: messagesRouter,
-    connections: connectionsRouter
+    connections: connectionsRouter,
+    users: usersRouter,
 });
 
 export { router };
