@@ -9,7 +9,6 @@ import {
 import { AppRouter } from '@/trpc/server/routes/router';
 import WebSocket from 'ws';
 import { event } from '@innobridge/qatar';
-import { MessageEvent } from '@/models/events';
 
 let client: TRPCClient<AppRouter> | null = null;
 let wsClient: ReturnType<typeof createWSClient> | null = null; // Store wsClient reference
@@ -46,13 +45,6 @@ const initializeTRPCClient = (url: string): void => {
       }),
     ],
   });
-};
-
-const publishMessage = (message: MessageEvent) => {
-  if (!client) {
-    throw new Error('TRPC client is not initialized. Call initiateClient first.');
-  }
-  return client.messages.publish.mutate(message);
 };
 
 const subscribeToEvents = (
@@ -100,7 +92,6 @@ const cleanup = () => {
 
 export { 
   initializeTRPCClient, 
-  publishMessage,
   subscribeToEvents,
   cleanup,
   client
