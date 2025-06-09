@@ -2,8 +2,10 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import { 
     initializeTRPCClient, 
-    publishMessage,
 } from '@/trpc/client/api';
+import {
+    publishMessage
+} from '@/trpc/client/messages';
 import { MessageEvent } from '@/models/events';
 import { Message } from '@/models/messages';
 

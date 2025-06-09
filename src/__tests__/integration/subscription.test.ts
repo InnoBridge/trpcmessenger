@@ -2,7 +2,6 @@ import * as dotenv from 'dotenv';
 import path from 'path';
 import { 
     initializeTRPCClient, 
-    publishMessage,
     subscribeToEvents
 } from '@/trpc/client/api';
 import { event } from '@innobridge/qatar';
