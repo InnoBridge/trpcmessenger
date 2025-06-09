@@ -32,7 +32,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
             messageId: 'message-123', // Keep same ID
             userIds: [USER1!, USER2!],
             senderId: '456',
-            content: 'Hello14, published message1!',
+            content: 'Hello15, published message1!',
             createdAt: new Date().getTime(),
         };
 
@@ -41,7 +41,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
             messageId: 'message-124', // Keep same ID
             userIds: [USER1!, USER2!],
             senderId: '456',
-            content: 'Hello14, published message2!',
+            content: 'Hello15, published message2!',
             createdAt: new Date().getTime(),
         };
         const messaggeEvent1: MessageEvent = {
@@ -56,7 +56,7 @@ const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
         };
 
         // await delay(2000);
-        await sendMessageTest(messaggeEvent1);
+        // await sendMessageTest(messaggeEvent1);
         // await delay(500); // Small delay between messages
         await sendMessageTest(messaggeEvent2);
 

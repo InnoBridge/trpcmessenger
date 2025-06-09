@@ -136,8 +136,8 @@ const rejectConnectionRequestTest = async () => {
         await createConnectionRequestNonExistentUserTest();
         // await createConnectionRequestTest();
         // await cancelConnectionRequestTest();
-        // await acceptConnectionRequestTest();
-        await rejectConnectionRequestTest();
+        await acceptConnectionRequestTest();
+        // await rejectConnectionRequestTest();
 
         console.log("🎉 All integration tests passed");
     } catch (err) {
