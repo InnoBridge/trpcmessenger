@@ -20,6 +20,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 const SERVER_URL = process.env.SERVER_URL;
 const USER1 = process.env.USER1;
 const USER2 = process.env.USER2;
+const USER3 = process.env.USER3;
 const NON_EXISTENT_USER = process.env.NON_EXISTENT_USER;
 
 const createConnectionRequestNonExistentUserTest = async () => {
@@ -35,7 +36,7 @@ const createConnectionRequestTest = async () => {
     console.log('Starting createConnectionRequest test...');
     let connectionRequest;
     try {
-        connectionRequest = await createConnectionRequest(USER1!, USER2!, 'Test message');
+        connectionRequest = await createConnectionRequest(USER2!, USER1!, 'Test message');
         console.log('Connection request created successfully:', connectionRequest);
         const connectionRequests = await getConnectionRequests(USER2!);
         console.log('Connection requests for user:', USER2, connectionRequests);
@@ -44,9 +45,9 @@ const createConnectionRequestTest = async () => {
         console.error('Failed to create connection request:', error);
         throw error;
     } finally {
-        if (connectionRequest) {
-            await deleteConnectionRequest(connectionRequest.requestId);
-        }
+        // if (connectionRequest) {
+        //     await deleteConnectionRequest(connectionRequest.requestId);
+        // }
     }
 };
 
@@ -90,17 +91,17 @@ const acceptConnectionRequestTest = async () => {
         console.error('Failed to accept connection request:', error);
         throw error;
     } finally {
-        const connection = await getConnectionByUserIdsPair(USER1!, USER2!);
-        console.log ('Connection between users:', USER1, USER2, connection);
-        const connections = await getConnectionsByUserId(USER1!);
-        console.log ('Connections for user:', USER1, connections);
-        if (connection) {
-            await deleteConnection(connection.connectionId);
-            console.log('Connection deleted successfully');
-        }
-        if (connectionRequest) {
-            await deleteConnectionRequest(connectionRequest.requestId);
-        }
+        // const connection = await getConnectionByUserIdsPair(USER1!, USER2!);
+        // console.log ('Connection between users:', USER1, USER2, connection);
+        // const connections = await getConnectionsByUserId(USER1!);
+        // console.log ('Connections for user:', USER1, connections);
+        // if (connection) {
+        //     await deleteConnection(connection.connectionId);
+        //     console.log('Connection deleted successfully');
+        // }
+        // if (connectionRequest) {
+        //     await deleteConnectionRequest(connectionRequest.requestId);
+        // }
     }
 };
     
@@ -134,9 +135,9 @@ const rejectConnectionRequestTest = async () => {
 
         // async tests in order
         await createConnectionRequestNonExistentUserTest();
-        // await createConnectionRequestTest();
+        await createConnectionRequestTest();
         // await cancelConnectionRequestTest();
-        await acceptConnectionRequestTest();
+        // await acceptConnectionRequestTest();
         // await rejectConnectionRequestTest();
 
         console.log("🎉 All integration tests passed");

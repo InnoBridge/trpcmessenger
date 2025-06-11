@@ -1,6 +1,6 @@
 import { trpc } from '@/trpc/server/trpc';
 import { z } from 'zod';
-import { connectionsApi, connection } from '@innobridge/usermanagement';
+import { connectionsApi } from '@innobridge/usermanagement';
 import {
     queueApi
 } from '@innobridge/qatar';

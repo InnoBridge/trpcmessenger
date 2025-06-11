@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { event } from '@innobridge/qatar';
 import { Message } from '@/models/messages';
 import { connection } from '@innobridge/usermanagement';
 
@@ -20,12 +19,17 @@ const MessageEventSchema = BaseEventSchema.extend({
     }),
 });
 
-interface MessageEvent extends event.BaseEvent {
+interface BaseEvent {
+    type: string;
+    userIds: string[];
+}
+
+interface MessageEvent extends BaseEvent {
     type: 'message';
     message: Message
 }
 
-interface ConnectionRequestEvent extends event.BaseEvent {
+interface ConnectionRequestEvent extends BaseEvent {
     type: 'connectionRequest';
     connectionRequest: connection.ConnectionRequest;
 };
@@ -33,6 +37,7 @@ interface ConnectionRequestEvent extends event.BaseEvent {
 export {
     BaseEventSchema,
     MessageEventSchema,
+    BaseEvent,
     MessageEvent,
     ConnectionRequestEvent
 };
