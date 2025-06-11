@@ -6,14 +6,12 @@ import {
   wsLink,
   splitLink
 } from '@trpc/client';
-import { AppRouter } from '@/trpc/server/routes/router';
 import WebSocket from 'ws';
-import { event } from '@innobridge/qatar';
+import { BaseEvent } from '@/models/events';
 
-let client: TRPCClient<AppRouter> | null = null;
+let client: TRPCClient<any> | null = null;
 let wsClient: ReturnType<typeof createWSClient> | null = null; // Store wsClient reference
 let httpLink: ReturnType<typeof httpBatchLink> | null = null;
-
 
 const initializeTRPCClient = (url: string): void => {
   const host = url.replace(/^https?:\/\//, '');
@@ -32,7 +30,7 @@ const initializeTRPCClient = (url: string): void => {
     }),
   });
 
-  client = createTRPCClient<AppRouter>({
+  client = createTRPCClient<any>({
     links: [
       splitLink({
         condition(op) {
@@ -49,21 +47,21 @@ const initializeTRPCClient = (url: string): void => {
 
 const subscribeToEvents = (
     userId: string, 
-    messageHandler: (event: event.BaseEvent, ack: () => void, nack: () => void) => void
+    messageHandler: (event: BaseEvent, ack: () => void, nack: () => void) => void
 ): Promise<any> => {
     if (!client) {
         throw new Error('TRPC client is not initialized. Call initializeTRPCClient first.');
     }
     
     return new Promise((resolve, reject) => {
-        const subscription = client!.events.subscribeUser.subscribe(
+        const subscription = (client as any).events.subscribeUser.subscribe(
             { userId },
             {
                 onStarted: () => {
                     console.log('Subscription established and ready');
                     resolve(subscription); // Resolve with subscription object when ready
                 },
-                onData: (message) => {
+                onData: (message: any) => {
                     // Extract ACK/NACK functions from the message
                     const { _ack, _nack, ...event } = message;           
                     // Create ACK/NACK functions or use defaults
@@ -71,7 +69,7 @@ const subscribeToEvents = (
                     const nack = _nack || (() => console.log('No NACK function provided'));
                     messageHandler(event, ack, nack);
                 },
-                onError: (error) => {
+                onError: (error: any) => {
                     console.error('Subscription error:', error);
                     reject(error); // Reject promise on error
                 },
@@ -82,9 +80,9 @@ const subscribeToEvents = (
 
 
 // Add cleanup function
-const cleanup = () => {
+const cleanup = async () => {
   if (wsClient) {
-    wsClient.close();
+    await wsClient.close();
     wsClient = null;
   }
   client = null;
