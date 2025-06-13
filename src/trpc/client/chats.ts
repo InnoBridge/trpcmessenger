@@ -14,14 +14,14 @@ const getChatByChatId = async (chatId: string): Promise<chats.Chat | null> => {
 const getChatsByUserId = async (
     userId: string,
     updatedAfter?: number,
-    limit: number = 20,
-    offset: number = 0
+    page: number = 0,
+    limit: number = 20
 ): Promise<PaginatedResult<chats.Chat>> => {
     return await (client as any).chats.getChatsByUserId.query({
         userId,
         updatedAfter,
-        limit,
-        offset
+        page,
+        limit
     });
 };
 
@@ -32,28 +32,28 @@ const deleteChat = async (chatId: string): Promise<void> => {
 const getMessagesByChatId = async (
     chatId: string,
     createdAfter?: number,
-    limit: number = 20,
-    offset: number = 0
+    page: number = 0,
+    limit: number = 20
 ): Promise<PaginatedResult<chats.Message>> => {
     return await (client as any).chats.getMessagesByChatId.query({
         chatId,
         createdAfter,
-        limit,
-        offset
+        page,
+        limit
     });
 };
 
 const getMessagesByUserId = async (
     userId: string,
     createdAfter?: number,
-    limit: number = 20,
-    offset: number = 0
+    page: number = 0,
+    limit: number = 20
 ): Promise<PaginatedResult<chats.Message>> => {
     return await (client as any).chats.getMessagesByUserId.query({
         userId,
         createdAfter,
-        limit,
-        offset
+        page,
+        limit
     });
 };
 
