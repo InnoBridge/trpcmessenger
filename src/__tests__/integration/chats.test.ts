@@ -19,7 +19,6 @@ import {
     getMessagesByUserId,
     deleteChat
 } from '@/trpc/client/chats';
-import { get } from 'http';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
