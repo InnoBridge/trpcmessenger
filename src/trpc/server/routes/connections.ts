@@ -1,6 +1,7 @@
 import { trpc } from '@/trpc/server/trpc';
 import { z } from 'zod';
 import { connectionsApi } from '@innobridge/usermanagement';
+import { chatsApi } from '@innobridge/lexi';
 import {
     queueApi
 } from '@innobridge/qatar';
@@ -17,6 +18,10 @@ const {
     deleteConnectionRequest,
     deleteConnectionById
 } = connectionsApi;
+const { 
+    getChatByConnectionId,
+    deleteChat
+} = chatsApi;
 
 
 const getRequests = trpc.procedure
@@ -157,6 +162,10 @@ const deleteConnection = trpc.procedure
     .mutation(async ({ input }): Promise<void> => {
         try {
             await deleteConnectionById(input.connectionId);
+            const chat = await getChatByConnectionId(input.connectionId);
+            if (chat) {
+                await deleteChat(chat.chatId);
+            }
         } catch (error) {
             console.error(`❌ Error deleting connection:`, error);
             throw new Error('Failed to delete connection');

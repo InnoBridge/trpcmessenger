@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { Message } from '@/models/messages';
+import { chats } from '@innobridge/lexi';
 import { connection } from '@innobridge/usermanagement';
 
 const BaseEventSchema = z.object({
@@ -7,27 +7,33 @@ const BaseEventSchema = z.object({
     userIds: z.array(z.string()),
 });
 
-const MessageEventSchema = BaseEventSchema.extend({
-    type: z.literal('message'),
-    message: z.object({
-        chatId: z.string(),
-        messageId: z.string(),
-        userIds: z.array(z.string()),
-        senderId: z.string(),
-        content: z.string(),
-        createdAt: z.number(),
-    }),
-});
+// const MessageEventSchema = BaseEventSchema.extend({
+//     type: z.literal('message'),
+//     message: z.object({
+//         chatId: z.string(),
+//         messageId: z.string(),
+//         userIds: z.array(z.string()),
+//         senderId: z.string(),
+//         content: z.string(),
+//         createdAt: z.number(),
+//     }),
+// });
 
 interface BaseEvent {
     type: string;
     userIds: string[];
 }
 
-interface MessageEvent extends BaseEvent {
-    type: 'message';
-    message: Message
-}
+interface ChatMessageEvent extends BaseEvent {
+    type: 'chatMessage';
+    chat: chats.Chat;
+    message: chats.Message;
+};
+
+interface ChatDeletionEvent extends BaseEvent {
+    type: 'chatDeletion';
+    chatId: string;
+};
 
 interface ConnectionRequestEvent extends BaseEvent {
     type: 'connectionRequest';
@@ -36,8 +42,9 @@ interface ConnectionRequestEvent extends BaseEvent {
 
 export {
     BaseEventSchema,
-    MessageEventSchema,
+    // MessageEventSchema,
     BaseEvent,
-    MessageEvent,
+    ChatMessageEvent,
+    ChatDeletionEvent,
     ConnectionRequestEvent
 };

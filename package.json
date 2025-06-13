@@ -1,6 +1,6 @@
 {
   "name": "@innobridge/trpcmessenger",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A TypeScript library for trpc client and routes",
   "author": "yilengyao <innobridgetechnology@gmail.com>",
   "repository": {
@@ -63,6 +63,7 @@
     "zod": "^3.25.51"
   },
   "peerDependencies": {
-    "@innobridge/usermanagement": "^0.2.0"
+    "@innobridge/lexi": "^0.0.2",
+    "@innobridge/usermanagement": "^0.2.1"
   }
 }
