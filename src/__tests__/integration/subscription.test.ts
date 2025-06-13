@@ -5,7 +5,7 @@ import {
     subscribeToEvents
 } from '@/trpc/client/api';
 import { event } from '@innobridge/qatar';
-import { MessageEvent, ConnectionRequestEvent } from '@/models/events';
+import { ChatMessageEvent, ChatDeletionEvent, ConnectionRequestEvent } from '@/models/events';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
@@ -34,9 +34,13 @@ const subscribeToEvent = async () => {
         try {
             console.log('Received event:', event.type);
             switch (event.type) {
-                case 'message':
-                    const messageEvent = event as MessageEvent;
-                    console.log('Message Event:', messageEvent);
+                case 'chatMessage':
+                    const chatMessageEvent = event as ChatMessageEvent;
+                    console.log('Chat Message Event:', chatMessageEvent);
+                    break;
+                case 'chatDeletion':
+                    const chatDeletionEvent = event as ChatDeletionEvent;
+                    console.log('Chat Deletion Event:', chatDeletionEvent);
                     break;
                 case 'connectionRequest':
                     const connectionRequestEvent = event as ConnectionRequestEvent;
