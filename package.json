@@ -63,6 +63,7 @@
     "zod": "^3.25.51"
   },
   "peerDependencies": {
+    "@innobridge/lexi": "^0.0.1",
     "@innobridge/usermanagement": "^0.2.0"
   }
 }
