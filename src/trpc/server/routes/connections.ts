@@ -170,12 +170,12 @@ const deleteConnection = trpc.procedure
             if (chat) {
                 await deleteChat(chat.chatId);
             }
-            const connectionDeleteionEvent: ConnectionDeletionEvent = {
+            const connectionDeletionEvent: ConnectionDeletionEvent = {
                 type: 'connectionDeletion',
                 userIds: [connection.userId1, connection.userId2],
                 connectionId: input.connectionId,
             };
-            await publishEvent(connectionDeleteionEvent);
+            await publishEvent(connectionDeletionEvent);
         } catch (error) {
             console.error(`❌ Error deleting connection:`, error);
             throw new Error('Failed to delete connection');
