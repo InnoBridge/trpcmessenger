@@ -5,7 +5,7 @@ import { chatsApi } from '@innobridge/lexi';
 import {
     queueApi
 } from '@innobridge/qatar';
-import { ConnectionRequestEvent } from '@/models/events';
+import { ConnectionRequestEvent, ConnectionDeletionEvent } from '@/models/events';
 
 const { publishEvent } = queueApi;
 
@@ -161,11 +161,21 @@ const deleteConnection = trpc.procedure
     .input(z.object({ connectionId: z.number() }))
     .mutation(async ({ input }): Promise<void> => {
         try {
+            const connection = await connectionsApi.getConnectionById(input.connectionId);
+            if (!connection) {
+                throw new Error(`Connection not found for ID: ${input.connectionId}`);
+            }
             await deleteConnectionById(input.connectionId);
             const chat = await getChatByConnectionId(input.connectionId);
             if (chat) {
                 await deleteChat(chat.chatId);
             }
+            const connectionDeleteionEvent: ConnectionDeletionEvent = {
+                type: 'connectionDeletion',
+                userIds: [connection.userId1, connection.userId2],
+                connectionId: input.connectionId,
+            };
+            await publishEvent(connectionDeleteionEvent);
         } catch (error) {
             console.error(`❌ Error deleting connection:`, error);
             throw new Error('Failed to delete connection');
