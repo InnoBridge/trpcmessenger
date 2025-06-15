@@ -40,11 +40,16 @@ interface ConnectionRequestEvent extends BaseEvent {
     connectionRequest: connection.ConnectionRequest;
 };
 
+interface ConnectionDeletionEvent extends BaseEvent {
+    type: 'connectionDeletion';
+    connectionId: number;
+};
+
 export {
     BaseEventSchema,
-    // MessageEventSchema,
     BaseEvent,
     ChatMessageEvent,
     ChatDeletionEvent,
-    ConnectionRequestEvent
+    ConnectionRequestEvent,
+    ConnectionDeletionEvent
 };
