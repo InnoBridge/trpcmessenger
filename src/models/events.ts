@@ -40,6 +40,12 @@ interface ConnectionRequestEvent extends BaseEvent {
     connectionRequest: connection.ConnectionRequest;
 };
 
+interface ConnectionRequestAcceptedEvent extends BaseEvent {
+    type: 'connectionRequestAccepted';
+    connectionRequest: connection.ConnectionRequest;
+    connection: connection.Connection;
+};
+
 interface ConnectionDeletionEvent extends BaseEvent {
     type: 'connectionDeletion';
     connectionId: number;
@@ -51,5 +57,6 @@ export {
     ChatMessageEvent,
     ChatDeletionEvent,
     ConnectionRequestEvent,
+    ConnectionRequestAcceptedEvent,
     ConnectionDeletionEvent
 };

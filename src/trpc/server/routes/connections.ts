@@ -5,7 +5,7 @@ import { chatsApi } from '@innobridge/lexi';
 import {
     queueApi
 } from '@innobridge/qatar';
-import { ConnectionRequestEvent, ConnectionDeletionEvent } from '@/models/events';
+import { ConnectionRequestEvent, ConnectionRequestAcceptedEvent, ConnectionDeletionEvent } from '@/models/events';
 
 const { publishEvent } = queueApi;
 
@@ -91,12 +91,25 @@ const acceptRequest = trpc.procedure
             if (!connectionRequest) {
                 throw new Error("Connection request not found or already processed.");
             }
-            const connectionRequestEvent: ConnectionRequestEvent = {
-                type: 'connectionRequest',
+
+            const connection = await connectionsApi.getConnectionByUserIdsPair(
+                connectionRequest.requesterId, 
+                connectionRequest.receiverId
+            );
+
+            if (!connection) {
+                throw new Error("Connection not found for the accepted request.");
+            }
+
+            // Single event with both the connection request and the new connection
+            const connectionRequestAcceptedEvent: ConnectionRequestAcceptedEvent  = {
+                type: 'connectionRequestAccepted',
                 userIds: [connectionRequest.requesterId, connectionRequest.receiverId],
                 connectionRequest: connectionRequest,
+                connection: connection, 
             };
-            await publishEvent(connectionRequestEvent);
+            await publishEvent(connectionRequestAcceptedEvent);
+
             return connectionRequest;
         } catch (error) {
             console.error(`❌ Error accepting connection request:`, error);
