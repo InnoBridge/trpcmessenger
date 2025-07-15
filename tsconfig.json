@@ -12,6 +12,7 @@
           "@/*": ["src/*"],
           "@innobridge/usermanagement": ["./node_modules/@innobridge/usermanagement/dist/index"],
           "@innobridge/lexi": ["./node_modules/@innobridge/lexi/dist/index"],
+          "@innobridge/scheduler": ["./node_modules/@innobridge/scheduler/dist/index"],
           "@innobridge/qatar": ["./node_modules/@innobridge/qatar/dist/index"],
     }
   },
