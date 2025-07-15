@@ -30,7 +30,7 @@ const getEventsByCustomerId = trpc.procedure
         return await getEventsByCustomer(input.customerId);
     });
 
-const getEventByProviderOrCustomerId = trpc.procedure
+const getEventsByProviderOrCustomerId = trpc.procedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }): Promise<any> => {
         return await getEventsByProviderOrCustomer(input.userId);
@@ -108,7 +108,7 @@ const scheduleRouter = trpc.router({
     getEventById,
     getEventsByProviderId,
     getEventsByCustomerId,
-    getEventByProviderOrCustomerId,
+    getEventsByProviderOrCustomerId,
     createEvent,
     updateEventStatus,
     deleteEvent
