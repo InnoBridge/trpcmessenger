@@ -105,6 +105,7 @@ const deleteEvent = trpc.procedure
     });
 
 const scheduleRouter = trpc.router({
+    getEventById,
     getEventsByProviderId,
     getEventsByCustomerId,
     getEventByProviderOrCustomerId,
