@@ -3,13 +3,20 @@ import { z } from 'zod';
 import { eventsApi, events } from '@innobridge/scheduler';
 
 const {
+    getEventById: getEventByIdQuery,
     getEventsByProvider,
     getEventsByCustomer,
-    getEventByProviderOrCustomer,
+    getEventsByProviderOrCustomer,
     createEvent: createEventQuery,
     updateEventStatus: updateEventStatusQuery,
     deleteEvent: deleteEventQuery
 } = eventsApi;
+
+const getEventById = trpc.procedure
+    .input(z.object({ eventId: z.string() }))   
+    .query(async ({ input }): Promise<events.Event | null> => {
+        return await getEventByIdQuery(input.eventId);
+    });
 
 const getEventsByProviderId = trpc.procedure
     .input(z.object({ providerId: z.string() }))
@@ -26,7 +33,7 @@ const getEventsByCustomerId = trpc.procedure
 const getEventByProviderOrCustomerId = trpc.procedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input }): Promise<any> => {
-        return await getEventByProviderOrCustomer(input.userId);
+        return await getEventsByProviderOrCustomer(input.userId);
     });
 
 const createEvent = trpc.procedure

@@ -64,7 +64,7 @@
   },
   "peerDependencies": {
     "@innobridge/lexi": "^0.0.3",
-    "@innobridge/scheduler": "^0.0.2",
+    "@innobridge/scheduler": "^0.0.3",
     "@innobridge/usermanagement": "^0.2.1"
   }
 }
