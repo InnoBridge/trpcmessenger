@@ -14,7 +14,7 @@ const {
 
 const getEventById = trpc.procedure
     .input(z.object({ eventId: z.string() }))   
-    .query(async ({ input }): Promise<events.Event | null> => {
+    .query(async ({ input }): Promise<any> => {
         return await getEventByIdQuery(input.eventId);
     });
 
