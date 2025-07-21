@@ -19,6 +19,12 @@ const BaseEventSchema = z.object({
 //     }),
 // });
 
+enum SceheduleAction {
+    CREATE = 'create',
+    UPDATE = 'update',
+    DELETE = 'delete',
+}
+
 interface BaseEvent {
     type: string;
     userIds: string[];
@@ -51,12 +57,20 @@ interface ConnectionDeletionEvent extends BaseEvent {
     connectionId: number;
 };
 
+interface ScheduleEvent extends BaseEvent {
+    type: 'schedule';
+    action: SceheduleAction;
+    eventId?: string;
+};
+
 export {
     BaseEventSchema,
+    SceheduleAction,
     BaseEvent,
     ChatMessageEvent,
     ChatDeletionEvent,
     ConnectionRequestEvent,
     ConnectionRequestAcceptedEvent,
-    ConnectionDeletionEvent
+    ConnectionDeletionEvent,
+    ScheduleEvent
 };
