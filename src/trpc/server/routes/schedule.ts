@@ -8,7 +8,6 @@ import {
     ScheduleAction,
     ScheduleEvent
 } from '@/models/events';
-import { subscribe } from 'diagnostics_channel';
 
 const {
     publishScheduleEvent,
