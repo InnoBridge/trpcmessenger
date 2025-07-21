@@ -19,7 +19,7 @@ const BaseEventSchema = z.object({
 //     }),
 // });
 
-enum SceheduleAction {
+enum ScheduleAction {
     CREATE = 'create',
     UPDATE = 'update',
     DELETE = 'delete',
@@ -59,13 +59,13 @@ interface ConnectionDeletionEvent extends BaseEvent {
 
 interface ScheduleEvent extends BaseEvent {
     type: 'schedule';
-    action: SceheduleAction;
+    action: ScheduleAction;
     eventId?: string;
 };
 
 export {
     BaseEventSchema,
-    SceheduleAction,
+    ScheduleAction,
     BaseEvent,
     ChatMessageEvent,
     ChatDeletionEvent,

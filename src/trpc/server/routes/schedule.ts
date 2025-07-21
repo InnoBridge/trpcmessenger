@@ -5,7 +5,7 @@ import {
     queueApi
 } from '@innobridge/qatar';
 import {
-    SceheduleAction,
+    ScheduleAction,
     ScheduleEvent
 } from '@/models/events';
 import { subscribe } from 'diagnostics_channel';
@@ -79,7 +79,7 @@ const createEvent = trpc.procedure
             const scheduleEvent: ScheduleEvent = {
                 type: 'schedule',
                 userIds: [input.providerId],
-                action: SceheduleAction.CREATE,
+                action: ScheduleAction.CREATE,
                 eventId: createdEvent.id!
             };
             await publishScheduleEvent(scheduleEvent);
@@ -106,7 +106,7 @@ const updateEventStatus = trpc.procedure
             const scheduleEvent: ScheduleEvent = {
                 type: 'schedule',
                 userIds: [updatedEvent.providerId],
-                action: SceheduleAction.UPDATE,
+                action: ScheduleAction.UPDATE,
                 eventId: updatedEvent.id!
             };
             await publishScheduleEvent(scheduleEvent);
@@ -131,7 +131,7 @@ const deleteEvent = trpc.procedure
             const scheduleEvent: ScheduleEvent = {
                 type: 'schedule',
                 userIds: [deletedEvent.providerId],
-                action: SceheduleAction.DELETE,
+                action: ScheduleAction.DELETE,
                 eventId: deletedEvent.id!
             };
             await publishScheduleEvent(scheduleEvent);
