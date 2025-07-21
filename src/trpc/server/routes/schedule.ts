@@ -1,6 +1,19 @@
 import { trpc } from '@/trpc/server/trpc';
 import { z } from 'zod';
 import { eventsApi, events } from '@innobridge/scheduler';
+import {
+    queueApi
+} from '@innobridge/qatar';
+import {
+    ScheduleAction,
+    ScheduleEvent
+} from '@/models/events';
+
+const {
+    publishScheduleEvent,
+    bindSubscriberToSchedule: bindSubscriberToScheduleQuery,
+    unbindSubscriberToSchedule: unbindSubscriberToScheduleQuery
+} = queueApi;
 
 const {
     getEventById: getEventByIdQuery,
@@ -61,7 +74,15 @@ const createEvent = trpc.procedure
                 providerId: input.providerId,
                 customerId: input.customerId
             } as events.Event;
-            return await createEventQuery(event);
+            const createdEvent = await createEventQuery(event);
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [input.providerId],
+                action: ScheduleAction.CREATE,
+                eventId: createdEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return createdEvent;
         } catch (error) {
             console.error(`❌ Error creating event:`, error);
             if (error instanceof Error) {
@@ -80,7 +101,15 @@ const updateEventStatus = trpc.procedure
     }))
     .mutation(async ({ input }): Promise<any> => {
         try {
-            return await updateEventStatusQuery(input.eventId, input.status as events.EventStatus, input.customerId, input.color);
+            const updatedEvent = await updateEventStatusQuery(input.eventId, input.status as events.EventStatus, input.customerId, input.color);
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [updatedEvent.providerId],
+                action: ScheduleAction.UPDATE,
+                eventId: updatedEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return updatedEvent;
         } catch (error) {
             console.error(`❌ Error updating event status:`, error);
             if (error instanceof Error) {
@@ -92,15 +121,60 @@ const updateEventStatus = trpc.procedure
 
 const deleteEvent = trpc.procedure
     .input(z.object({ eventId: z.string() }))
-    .mutation(async ({ input }): Promise<void> => {
+    .mutation(async ({ input }): Promise<any> => {
         try {
-            await deleteEventQuery(input.eventId);
+            const deletedEvent = await deleteEventQuery(input.eventId);
+            if (!deletedEvent) {
+                throw new Error('Event not found');
+            }
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [deletedEvent.providerId],
+                action: ScheduleAction.DELETE,
+                eventId: deletedEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return deletedEvent;
         } catch (error) {
             console.error(`❌ Error deleting event:`, error);
             if (error instanceof Error) {
                 throw new Error(`Failed to delete event: ${error.message}`);
             }
             throw new Error('Failed to delete event');
+        }
+    });
+
+const bindSubscriberToSchedule = trpc.procedure
+    .input(z.object({ 
+        providerId: z.string(),
+        subscriberId: z.string()
+     }))
+    .mutation(async ({ input }): Promise<void> => {
+        try {
+            await bindSubscriberToScheduleQuery(input.providerId, input.subscriberId);
+        } catch (error) {
+            console.error(`❌ Error binding subscriber to schedule:`, error);
+            if (error instanceof Error) {
+                throw new Error(`Failed to bind subscriber: ${error.message}`);
+            }
+            throw new Error('Failed to bind subscriber');
+        }
+    });
+
+const unbindSubscriberToSchedule = trpc.procedure
+    .input(z.object({
+        providerId: z.string(),
+        subscriberId: z.string()
+    }))
+    .mutation(async ({ input }): Promise<void> => {
+        try {
+            await unbindSubscriberToScheduleQuery(input.providerId, input.subscriberId);
+        } catch (error) {
+            console.error(`❌ Error unbinding subscriber from schedule:`, error);
+            if (error instanceof Error) {
+                throw new Error(`Failed to unbind subscriber: ${error.message}`);
+            }
+            throw new Error('Failed to unbind subscriber');
         }
     });
 
@@ -111,7 +185,9 @@ const scheduleRouter = trpc.router({
     getEventsByProviderOrCustomerId,
     createEvent,
     updateEventStatus,
-    deleteEvent
+    deleteEvent,
+    bindSubscriberToSchedule,
+    unbindSubscriberToSchedule
 });
 
 export {
