@@ -4,16 +4,15 @@ import {
     initializeTRPCClient, 
     subscribeToEvents
 } from '@/trpc/client/api';
+import {
+    bindSubscriberToSchedule,
+    unbindSubscriberToSchedule
+} from '@/trpc/client/schedule';
 import { event } from '@innobridge/qatar';
-import { ChatMessageEvent, ChatDeletionEvent, ConnectionRequestEvent } from '@/models/events';
 
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const SERVER_URL = process.env.SERVER_URL;
-
-const USER1 = process.env.USER1;
-const USER2 = process.env.USER2;
-let userId = null;
 
 interface Subscription {
     unsubscribe: () => void;
@@ -21,53 +20,46 @@ interface Subscription {
 
 let subscription: Subscription | null = null; // Move outside to make it accessible to signal handlers
 
-switch (process.argv[2]) {
-    case '1':
-        userId = USER1;
-        break;
-    case '2':
-        userId = USER2;
-        break;
-    default:
-        userId = USER1; // Default to USER1 if no argument is provided
-};
+const providerId = process.argv[2] || 'default-user-123';
 
-const subscribeToEvent = async () => {
-    console.log('Starting subscription test...');
-    console.log('Using userId:', userId);
-    subscription = await subscribeToEvents(userId!, (event: event.BaseEvent, ack, nack) => {
+const subscriberId = process.argv[3] || 'default-subscriber-456';
+
+const subscribeToScheduleEvent = async (providerId: string, subscriberId: string) => {
+    console.log('Starting schedule subscription test...');
+    console.log('Using providerId:', providerId);
+    console.log('Using subscriberId:', subscriberId);
+    subscription = await subscribeToEvents(subscriberId, (event: event.BaseEvent, ack, nack) => {
         try {
-            console.log('Received event:', event.type);
+            console.log('Received schedule event:', event.type);
             switch (event.type) {
-                case 'chatMessage':
-                    const chatMessageEvent = event as ChatMessageEvent;
-                    console.log('Chat Message Event:', chatMessageEvent);
-                    break;
-                case 'chatDeletion':
-                    const chatDeletionEvent = event as ChatDeletionEvent;
-                    console.log('Chat Deletion Event:', chatDeletionEvent);
-                    break;
-                case 'connectionRequest':
-                    const connectionRequestEvent = event as ConnectionRequestEvent;
-                    console.log('Connection Request Event:', connectionRequestEvent);
+                case 'scheduleEvent':
+                    console.log('Schedule Event:', event);
                     break;
                 default:
-                    console.warn('Unhandled event type:', event.type);
+                    console.warn('Unhandled schedule event type:', event.type);
             }
             ack();
         } catch (error) {
-            console.error('Error handling event:', error);
+            console.error('Error handling schedule event:', error);
             if (nack) {
                 nack(); // Notify RabbitMQ that the message was not processed successfully
             }
-            throw new Error('tRPC Client Failed to process event');
         }
     });
-    console.log('Subscribed to messages for user:', userId);
+    await bindSubscriberToSchedule(providerId, subscriberId);
+    console.log('Subscription established successfully');
+    return subscription;
 };
 
 // Cleanup function
 const cleanup = async () => {
+    console.log('Cleaning up...');
+    try {
+        await unbindSubscriberToSchedule(providerId, subscriberId);
+        console.log('Unbound subscriber from schedule');
+    } catch (error) {
+        console.error('Error unbinding subscriber from schedule:', error);
+    }
     if (subscription) {
         console.log('\n🧹 Cleaning up subscription...');
         try {
@@ -110,7 +102,10 @@ process.on('unhandledRejection', (reason, promise) => {
         initializeTRPCClient(SERVER_URL!);
 
         // promise tests in order
-        await subscribeToEvent();
+        await subscribeToScheduleEvent(
+            providerId, 
+            subscriberId
+        );
 
        // Wait for subscription to be established
         console.log('Waiting for subscription to be established...');
