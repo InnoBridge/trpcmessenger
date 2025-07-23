@@ -29,6 +29,20 @@ const deleteEvent = async (eventId: string): Promise<void> => {
     return await (client as any).schedule.deleteEvent.mutate({ eventId });
 };
 
+const bindSubscriberToSchedule = (
+    providerId: string,
+    subscriberId: string
+): Promise<void> => {
+    return (client as any).schedule.bindSubscriberToSchedule.mutate({ providerId, subscriberId });
+};
+
+const unbindSubscriberToSchedule = (
+    providerId: string,
+    subscriberId: string
+): Promise<void> => {
+    return (client as any).schedule.unbindSubscriberToSchedule.mutate({ providerId, subscriberId });
+};
+
 export {
     getEventById,
     getEventsByProviderId,
@@ -36,5 +50,7 @@ export {
     getEventsByProviderOrCustomerId,
     createEvent,
     updateEventStatus,
-    deleteEvent
+    deleteEvent,
+    bindSubscriberToSchedule,
+    unbindSubscriberToSchedule
 };
