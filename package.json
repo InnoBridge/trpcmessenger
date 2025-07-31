@@ -1,6 +1,6 @@
 {
   "name": "@innobridge/trpcmessenger",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "A TypeScript library for trpc client and routes",
   "author": "yilengyao <innobridgetechnology@gmail.com>",
   "repository": {
