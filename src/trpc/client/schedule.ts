@@ -21,8 +21,8 @@ const createEvent = async (event: events.Event): Promise<events.Event> => {
     return await (client as any).schedule.createEvent.mutate(event);
 };
 
-const updateEventStatus = async (eventId: string, status: events.EventStatus): Promise<events.Event> => {
-    return await (client as any).schedule.updateEventStatus.mutate({ eventId, status });
+const updateEventStatus = async (eventId: string, status: events.EventStatus, customerId?: string, color?: string): Promise<events.Event> => {
+    return await (client as any).schedule.updateEventStatus.mutate({ eventId, status, customerId, color });
 };
 
 const deleteEvent = async (eventId: string): Promise<void> => {
