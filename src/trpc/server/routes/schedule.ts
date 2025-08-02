@@ -22,6 +22,9 @@ const {
     getEventsByProviderOrCustomer,
     createEvent: createEventQuery,
     updateEventStatus: updateEventStatusQuery,
+    updateEventStatusAndColor: updateEventStatusAndColorQuery,
+    updateEventStatusAndCustomerId: updateEventStatusAndCustomerIdQuery,
+    updateEventStatusWithColorAndCustomerId: updateEventStatusWithColorAndCustomerIdQuery,
     deleteEvent: deleteEventQuery
 } = eventsApi;
 
@@ -95,13 +98,11 @@ const createEvent = trpc.procedure
 const updateEventStatus = trpc.procedure
     .input(z.object({
         eventId: z.string(),
-        status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
-        customerId: z.string().optional(),
-        color: z.string().optional()
+        status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled'])
     }))
     .mutation(async ({ input }): Promise<any> => {
         try {
-            const updatedEvent = await updateEventStatusQuery(input.eventId, input.status as events.EventStatus, input.customerId, input.color);
+            const updatedEvent = await updateEventStatusQuery(input.eventId, input.status as events.EventStatus);
             const scheduleEvent: ScheduleEvent = {
                 type: 'schedule',
                 userIds: [updatedEvent.providerId],
@@ -116,6 +117,90 @@ const updateEventStatus = trpc.procedure
                 throw new Error(`Failed to update event status: ${error.message}`);
             }
             throw new Error('Failed to update event status');
+        }
+    });
+
+const updateEventStatusAndColor = trpc.procedure
+    .input(z.object({
+        eventId: z.string(),
+        status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
+        color: z.string()
+    }))
+    .mutation(async ({ input }): Promise<any> => {
+        try {
+            const updatedEvent = await updateEventStatusAndColorQuery(input.eventId, input.status as events.EventStatus, input.color);
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [updatedEvent.providerId],
+                action: ScheduleAction.UPDATE,
+                eventId: updatedEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return updatedEvent;
+        } catch (error) {
+            console.error(`❌ Error updating event status and color:`, error);
+            if (error instanceof Error) {
+                throw new Error(`Failed to update event status and color: ${error.message}`);
+            }
+            throw new Error('Failed to update event status and color');
+        }
+    });
+
+const updateEventStatusAndCustomerId = trpc.procedure
+    .input(z.object({
+        eventId: z.string(),
+        status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
+        customerId: z.string()
+    }))
+    .mutation(async ({ input }): Promise<any> => {
+        try {
+            const updatedEvent = await updateEventStatusAndCustomerIdQuery(input.eventId, input.status as events.EventStatus, input.customerId);
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [updatedEvent.providerId],
+                action: ScheduleAction.UPDATE,
+                eventId: updatedEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return updatedEvent;
+        } catch (error) {
+            console.error(`❌ Error updating event status and customer ID:`, error);
+            if (error instanceof Error) {
+                throw new Error(`Failed to update event status and customer ID: ${error.message}`);
+            }
+            throw new Error('Failed to update event status and customer ID');
+        }
+    });
+
+const updateEventStatusWithColorAndCustomerId = trpc.procedure
+    .input(z.object({
+        eventId: z.string(),
+        status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
+        color: z.string(),
+        customerId: z.string()
+    }))
+    .mutation(async ({ input }): Promise<any> => {
+        try {
+            const updatedEvent = await updateEventStatusWithColorAndCustomerIdQuery(
+                input.eventId,
+                input.status as events.EventStatus,
+                input.color,
+                input.customerId
+            );
+            const scheduleEvent: ScheduleEvent = {
+                type: 'schedule',
+                userIds: [updatedEvent.providerId],
+                action: ScheduleAction.UPDATE,
+                eventId: updatedEvent.id!
+            };
+            await publishScheduleEvent(scheduleEvent);
+            return updatedEvent;
+        } catch (error) {
+            console.error(`❌ Error updating event status with color and customer ID:`, error);
+            if (error instanceof Error) {
+                throw new Error(`Failed to update event status with color and customer ID: ${error.message}`);
+            }
+            throw new Error('Failed to update event status with color and customer ID');
         }
     });
 
@@ -185,6 +270,9 @@ const scheduleRouter = trpc.router({
     getEventsByProviderOrCustomerId,
     createEvent,
     updateEventStatus,
+    updateEventStatusAndColor,
+    updateEventStatusAndCustomerId,
+    updateEventStatusWithColorAndCustomerId,
     deleteEvent,
     bindSubscriberToSchedule,
     unbindSubscriberToSchedule
