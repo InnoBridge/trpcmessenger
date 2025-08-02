@@ -1,6 +1,5 @@
 import { client } from '@/trpc/client/api';
 import { events } from '@innobridge/scheduler';
-import e from 'express';
 
 const getEventById = async (eventId: string): Promise<events.Event | null> => {
     return await (client as any).schedule.getEventById.query({ eventId });
