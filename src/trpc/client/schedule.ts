@@ -21,8 +21,20 @@ const createEvent = async (event: events.Event): Promise<events.Event> => {
     return await (client as any).schedule.createEvent.mutate(event);
 };
 
-const updateEventStatus = async (eventId: string, status: events.EventStatus, customerId?: string, color?: string): Promise<events.Event> => {
-    return await (client as any).schedule.updateEventStatus.mutate({ eventId, status, customerId, color });
+const updateEventStatus = async (eventId: string, status: events.EventStatus): Promise<events.Event> => {
+    return await (client as any).schedule.updateEventStatus.mutate({ eventId, status });
+};
+
+const updateEventStatusAndColor = async (eventId: string, status: events.EventStatus, color: string): Promise<events.Event> => {
+    return await (client as any).schedule.updateEventStatusAndColor.mutate({ eventId, status, color });
+};
+
+const updateEventStatusAndCustomerId = async (eventId: string, status: events.EventStatus, customerId: string): Promise<events.Event> => {
+    return await (client as any).schedule.updateEventStatusAndCustomerId.mutate({ eventId, status, customerId });
+};
+
+const updateEventStatusWithColorAndCustomerId = async (eventId: string, status: events.EventStatus, color: string, customerId: string): Promise<events.Event> => {
+    return await (client as any).schedule.updateEventStatusWithColorAndCustomerId.mutate({ eventId, status, color, customerId });
 };
 
 const deleteEvent = async (eventId: string): Promise<void> => {
@@ -50,6 +62,9 @@ export {
     getEventsByProviderOrCustomerId,
     createEvent,
     updateEventStatus,
+    updateEventStatusAndColor,
+    updateEventStatusAndCustomerId,
+    updateEventStatusWithColorAndCustomerId,
     deleteEvent,
     bindSubscriberToSchedule,
     unbindSubscriberToSchedule
