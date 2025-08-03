@@ -29,11 +29,11 @@ const updateEventStatusAndColor = async (eventId: string, status: events.EventSt
     return await (client as any).schedule.updateEventStatusAndColor.mutate({ eventId, status, color });
 };
 
-const updateEventStatusAndCustomerId = async (eventId: string, status: events.EventStatus, customerId: string): Promise<events.Event> => {
+const updateEventStatusAndCustomerId = async (eventId: string, status: events.EventStatus, customerId: string | null): Promise<events.Event> => {
     return await (client as any).schedule.updateEventStatusAndCustomerId.mutate({ eventId, status, customerId });
 };
 
-const updateEventStatusWithColorAndCustomerId = async (eventId: string, status: events.EventStatus, color: string, customerId: string): Promise<events.Event> => {
+const updateEventStatusWithColorAndCustomerId = async (eventId: string, status: events.EventStatus, color: string, customerId: string | null): Promise<events.Event> => {
     return await (client as any).schedule.updateEventStatusWithColorAndCustomerId.mutate({ eventId, status, color, customerId });
 };
 

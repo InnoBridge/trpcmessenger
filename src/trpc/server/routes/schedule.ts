@@ -150,7 +150,7 @@ const updateEventStatusAndCustomerId = trpc.procedure
     .input(z.object({
         eventId: z.string(),
         status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
-        customerId: z.string()
+        customerId: z.string().nullable()
     }))
     .mutation(async ({ input }): Promise<any> => {
         try {
@@ -177,7 +177,7 @@ const updateEventStatusWithColorAndCustomerId = trpc.procedure
         eventId: z.string(),
         status: z.enum(['vacant', 'booked', 'fulfilled', 'cancelled']),
         color: z.string(),
-        customerId: z.string()
+        customerId: z.string().nullable()
     }))
     .mutation(async ({ input }): Promise<any> => {
         try {
