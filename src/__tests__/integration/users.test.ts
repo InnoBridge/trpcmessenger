@@ -4,6 +4,7 @@ import {
     initializeTRPCClient
 } from '@/trpc/client/api';
 import {
+    getUserById,
     getUserByUsername
 } from '@/trpc/client/users';
 
@@ -11,6 +12,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 const SERVER_URL = process.env.SERVER_URL;
 const USERNAME = process.env.USERNAME;
+const USER_ID = process.env.USER1;
 
 const getUserByUsernameTest = async () => {
     console.log('Starting getUserByUsernameTest test...');
@@ -27,7 +29,7 @@ const getUserByUsernameTest = async () => {
 const getUserByIdTest = async () => {
     console.log('Starting getUserByIdTest test...');
     try {
-        const user = await getUserByUsername(USERNAME!);
+        const user = await getUserById(USER_ID!);
         if (!user) {
             throw new Error('User not found');
         }
