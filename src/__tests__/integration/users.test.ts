@@ -24,6 +24,20 @@ const getUserByUsernameTest = async () => {
     }
 };
 
+const getUserByIdTest = async () => {
+    console.log('Starting getUserByIdTest test...');
+    try {
+        const user = await getUserByUsername(USERNAME!);
+        if (!user) {
+            throw new Error('User not found');
+        }
+        console.log('User retrieved successfully:', JSON.stringify(user, null, 2));
+        console.log('Get user by ID test completed successfully');
+    } catch (error) {
+        console.error('Failed to get user by ID:', error);
+        throw error;
+    }
+};
 
 (async function main() {
         let subscription: any;
@@ -33,6 +47,7 @@ const getUserByUsernameTest = async () => {
 
         // async tests in order
         await getUserByUsernameTest();
+        await getUserByIdTest();
 
         console.log("🎉 All integration tests passed");
     } catch (err) {
